@@ -1,106 +1,98 @@
 package Btap;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class PhoneBook extends Phone {
 
- private ArrayList<PhoneNumber> phoneList = new ArrayList<>();
+private ArrayList<PhoneNumber> phoneList;
+
+ public PhoneBook() {
+  phoneList = new ArrayList<>();
+ }
 
  public ArrayList<PhoneNumber> getPhoneList() {
   return phoneList;
  }
 
- public void setPhoneList(ArrayList<PhoneNumber> phoneList) {
-  this.phoneList = phoneList;
- }
-
- public PhoneBook() {
-
- }
-
- public PhoneBook(String name , String phone) {
-  PhoneNumber p = new PhoneNumber(name, phone);
-  if(!this.phoneList.contains(p)){
-   this.phoneList.add(0, p);
-  }
- }
-
  @Override
- public  void insertPhone(String name, String phone){
-  System.out.println(this.phoneList.size() );
-  if(this.phoneList.size() ==0 ) {
-   PhoneNumber p = new PhoneNumber(name, phone);
-   this.phoneList.add(p);
-   System.out.println("Insert complete!!");
-  }
-
-  for(int i = 0; i < this.phoneList.size()  ; i++) {
-   if(this.phoneList.get(i).getName().compareTo(name) == 0){
-    if(!this.phoneList.get(i).getPhoneList().contains(phone)) {
-     PhoneNumber p = new PhoneNumber(name, phone);
-     this.phoneList.add(0, p);
-     System.out.println("Insert complete!!");
-     break;
+ public void insertPhone(String name, String phone) {
+  for (PhoneNumber p : phoneList){
+   if(p.getName().equals(name)){
+    if(p.getPhone().contains(phone)){
+     return;
     }
-    else{
-     System.out.println("This phone number and user is exist!");
+    p.getPhone().add(phone);
+    return;
+   }
+  }
+  //ra ngoai for chac chan ko co name trung
+  PhoneNumber pn = new PhoneNumber(name,phone);
+  phoneList.add(pn);
+  return;
+ }
+
+ @Override
+ public void removePhone(String name) {
+  for (PhoneNumber p : phoneList){
+   if(p.getName().equals(name)){
+      phoneList.remove(p);
+   }
+  }
+  return;
+ }
+
+ @Override
+ public void updatePhone(String name, String oldphone, String newPhone) {
+
+  for (PhoneNumber p : phoneList){
+   if(p.getName().equals(name)){
+
+    if(p.getPhone().contains(oldphone)){
+     p.getPhone().remove(oldphone);
+     p.getPhone().add(newPhone);
     }
    }
-   else{
-    PhoneNumber p = new PhoneNumber(name, phone);
-    this.phoneList.add(p);
-    System.out.println("Insert complete!!");
-   }
+  }
+return;
+ }
 
-  }
- }
  @Override
- public  void removePhone(String name){
-  for( int i = 0; i < this.phoneList.size(); i ++) {
-   if(this.phoneList.get(i).getName().compareTo(name) == 0){
-    this.phoneList.remove(this.phoneList.get(i));
-    System.out.println("Remove complete!");
-    break;
-   }
-   else{
-    System.out.println("Remove failed!!!");
+ public PhoneNumber searchPhone(String name) {
+  for (PhoneNumber p : phoneList){
+   if(p.getName().equals(name)){
+       return p;
    }
   }
- }
- @Override
- public  void updatePhone(String name, String phone, String newPhone){
-  for(int i = 0; i < this.phoneList.size() ; i++ ){
-   if(this.phoneList.get(i).getName().compareTo(name) == 0
-           && this.phoneList.get(i).getPhoneList().contains(phone)){
-    this.phoneList.get(i).getPhoneList().remove(phone);
-    this.phoneList.get(i).getPhoneList().add(newPhone);
-    System.out.println("Update complete!");
-    break;
-   }
-   else{
-    System.out.println("Do not find information phone number!!!");
-   }
-  }
- }
- @Override
- public  PhoneNumber searchPhone(String name){
-  for(int i = 0; i < this.phoneList.size() ; i++ ){
-   if(this.phoneList.get(i).getName().compareTo(name) == 0){
-    return this.phoneList.get(i);
-   }
-  }
+
   return null;
  }
 
  @Override
- public  void sort(){
-  this.phoneList.sort((o1, o2) -> o1.getName().compareTo(o2.getName()));
+ public void sort() {
+  //bubble sort
+  int size = phoneList.size();
+  for(int i = 0; i < size; i++){
+   for (int j = 0; j < size - i-1;j++){
+    String name_pj = phoneList.get(j).getName();
+    String name_pj1 = phoneList.get(j+1).getName();
+    if(name_pj.compareTo(name_pj1)>0) {
+     PhoneNumber tmp = phoneList.get(j);
+     phoneList.add(j, phoneList.get(j + 1));
+     phoneList.add(j+1,tmp);
 
- }
- public void showInfo() {
-  System.out.printf("%-15s%-15s\n", "Name", "Phone number");
-  for( int i = 0 ; i < this.phoneList.size() ; i ++ ) {
-   this.phoneList.get(i).showInfoPhoneNumber();
-  }
+    }
+   }
+   }
+  Collections.sort(phoneList, new Comparator<PhoneNumber>(){
+   @Override
+   public int compare(PhoneNumber o1, PhoneNumber o2) {
+    return o1.getName().compareTo(o2.getName());
+   }
+          }
+
+  );
  }
 }
